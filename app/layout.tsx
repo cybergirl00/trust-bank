@@ -1,13 +1,13 @@
+import ConvexClientProvider from "@/providers/ConvexClientProvider";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ConvexClientProvider } from "./ConvexClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "My App Title",
-  description: "My app description",
+  title: "Trust Bank",
+  description: "The bank you can trust",
 };
 
 export default function RootLayout({
