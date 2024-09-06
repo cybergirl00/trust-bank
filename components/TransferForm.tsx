@@ -1,8 +1,10 @@
-"use client"
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl, FormField,
+  FormControl,
+  FormField,
   FormItem,
   FormLabel,
   FormMessage,
@@ -44,13 +46,12 @@ const TransferForm = () => {
   const [balance, setBalance] = useState<number | null>(null);
   const accountRef = users?.accountRef;
 
-  // Define your form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       accountNumber: "",
       bank: "",
-      amount: 0, // Default value as a number
+      amount: 0,
       note: "",
     },
   });
@@ -69,28 +70,28 @@ const TransferForm = () => {
         }
       }
     };
-  
+
     fetchBalance().catch(err => {
-      console.error(err); // Optional: log the error
+      console.error(err);
     });
   }, [accountRef]);
-  
+
   useEffect(() => {
     const fetchBanks = async () => {
       try {
         const response = await axios.get('/api/flutterwave/banks');
-        setBanks(response.data.data); // Adjust according to actual response structure
+        setBanks(response.data.data);
       } catch (error) {
         setError('Error fetching banks');
         console.error('Error:', error);
       }
     };
-  
+
     fetchBanks().catch(err => {
-      console.error(err); // Optional: log the error
+      console.error(err);
     });
   }, []);
-  
+
   if (error) return <div>{error}</div>;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -102,10 +103,10 @@ const TransferForm = () => {
         const response = await axios.post('/api/flutterwave/transfer', {
           account_bank: values.bank,
           account_number: values.accountNumber,
-          amount: values.amount, // Use numeric amount
+          amount: values.amount,
           narration: values.note,
-          reference: `tx-${Date.now()}`, // Unique reference for the transfer
-          debit_subaccount: accountRef, // Optional, depending on use case
+          reference: `tx-${Date.now()}`,
+          debit_subaccount: accountRef,
         });
         toast.success(response.data.message || "Transfer successful");
       } catch (error: any) {
@@ -117,10 +118,13 @@ const TransferForm = () => {
     }
   };
 
-  // Wrap the form submit handler to ensure it is synchronous
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    form.handleSubmit(onSubmit)();
+    try {
+      await form.handleSubmit(onSubmit)();
+    } catch (err) {
+      console.error("Form Submission Error:", err);
+    }
   };
 
   return (

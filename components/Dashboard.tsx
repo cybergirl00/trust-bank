@@ -1,11 +1,11 @@
-import { Copy, Plus, Send } from "lucide-react"
-import Header from "./Header"
-import Navbar from "./Navbar"
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { useUser } from "@clerk/nextjs"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
+import { Copy, Plus, Send } from "lucide-react";
+import Header from "./Header";
+import Navbar from "./Navbar";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import {
   Dialog,
   DialogContent,
@@ -13,17 +13,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import TransferForm from "./TransferForm"
-import { toast } from "sonner"
-import { Button } from "./ui/button"
-import { Label } from "./ui/label"
-import { Input } from "./ui/input"
+} from "@/components/ui/dialog";
+import TransferForm from "./TransferForm";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
 
 const Dashboard = () => {
   const [balance, setBalance] = useState<number | null>(null);
-  const { user } = useUser(); // Removed isLoaded since it’s not used
-  const users = useQuery(api.accounts.getAccountbyId, { userId: user?.id as string })
+  const { user } = useUser();
+  const users = useQuery(api.accounts.getAccountbyId, { userId: user?.id as string });
   const accountRef = users?.accountRef;
   const accountNumber = users?.accountNumber;
 
@@ -40,6 +40,11 @@ const Dashboard = () => {
     } else {
       toast.error("Account number is not available");
     }
+  };
+
+  // Use a synchronous handler
+  const handleCopyClick = () => {
+    handleCopy().catch((err) => console.error("Error handling copy:", err));
   };
 
   useEffect(() => {
@@ -59,7 +64,6 @@ const Dashboard = () => {
     fetchBalance().catch(err => console.error(err));
   }, [accountRef]);
   
-
   return (
     <div className='bg-black w-full h-70 rounded-b-xl'>
       <div>
@@ -116,11 +120,10 @@ const Dashboard = () => {
                       readOnly
                     />
                   </div>
-                  <Button type="button" size="sm" className="px-3" onClick={handleCopy}>
-                            <span className="sr-only">Copy</span>
-                            <Copy className="h-4 w-4" />
-                               </Button>
-
+                  <Button type="button" size="sm" className="px-3" onClick={handleCopyClick}>
+                    <span className="sr-only">Copy</span>
+                    <Copy className="h-4 w-4" />
+                  </Button>
                 </div>
                 <h1>Bank Name: {users?.bankName}</h1>
               </DialogContent>
@@ -129,7 +132,7 @@ const Dashboard = () => {
         </ul>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
