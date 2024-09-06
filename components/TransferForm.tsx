@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -116,10 +118,16 @@ const TransferForm = () => {
     }
   };
 
+  // Wrap the asynchronous `onSubmit` in a synchronous function to satisfy the expected `void` return
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void form.handleSubmit(onSubmit)();
+  };
+
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <FormField
             control={form.control}
             name="bank"
