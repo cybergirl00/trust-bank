@@ -85,7 +85,7 @@ const Settingup = () => {
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-semibold mb-6 text-center">Finish Setting Up Your Account</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit) as unknown as (event: React.FormEvent<HTMLFormElement>) => void} className="space-y-8">
             <FormField
               control={form.control}
               name="fullname"
