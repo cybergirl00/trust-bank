@@ -2,9 +2,7 @@
 import { Button } from "@/components/ui/button"
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
+  FormControl,FormField,
   FormItem,
   FormLabel,
   FormMessage,
@@ -46,6 +44,17 @@ const TransferForm = () => {
   const [balance, setBalance] = useState<number | null>(null);
   const accountRef = users?.accountRef;
 
+  // Define your form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      accountNumber: "",
+      bank: "",
+      amount: 0, // Default value as a number
+      note: "",
+    },
+  });
+
   useEffect(() => {
     const fetchBalance = async () => {
       if (accountRef) {
@@ -60,10 +69,12 @@ const TransferForm = () => {
         }
       }
     };
-
-    fetchBalance();
+  
+    fetchBalance().catch(err => {
+      console.error(err); // Optional: log the error
+    });
   }, [accountRef]);
-
+  
   useEffect(() => {
     const fetchBanks = async () => {
       try {
@@ -74,22 +85,14 @@ const TransferForm = () => {
         console.error('Error:', error);
       }
     };
-
-    fetchBanks();
+  
+    fetchBanks().catch(err => {
+      console.error(err); // Optional: log the error
+    });
   }, []);
+  
 
   if (error) return <div>{error}</div>;
-
-  // Define your form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      accountNumber: "",
-      bank: "",
-      amount: 0, // Default value as a number
-      note: "",
-    },
-  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!balance || balance < values.amount) {
@@ -196,5 +199,6 @@ const TransferForm = () => {
     </div>
   );
 }
+
 
 export default TransferForm;
