@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -118,19 +116,10 @@ const TransferForm = () => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      await form.handleSubmit(onSubmit)();
-    } catch (err) {
-      console.error("Form Submission Error:", err);
-    }
-  };
-
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
             name="bank"
