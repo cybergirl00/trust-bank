@@ -1,5 +1,5 @@
 'use client'
-import { Copy, PhoneCall, Plus, Send, Signal } from "lucide-react"
+import { Copy,  Plus, Send,  } from "lucide-react"
 import Header from "./Header"
 import Navbar from "./Navbar"
 import { useEffect, useState } from "react"
@@ -10,6 +10,11 @@ import { api } from "@/convex/_generated/api"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog"
 import TransferForm from "./TransferForm"
+import { toast } from "sonner"
+import { Button } from "./ui/button"
+import { Label } from "./ui/label"
+import { Input } from "./ui/input"
+
 
 
 const Dashboard = () => {
@@ -18,6 +23,22 @@ const Dashboard = () => {
     const { user, isLoaded } = useUser();
     const users= useQuery(api.accounts.getAccountbyId, { userId: user?.id as string})
     const  accountRef = users?.accountRef;
+    const accountNumber = users?.accountNumber;
+
+    // copy account number 
+    const handleCopy = async () => {
+      if (accountNumber) {  // Ensure accountNumber is defined
+        try {
+          await navigator.clipboard.writeText(accountNumber);
+          toast.success("Account number copied to clipboard!"); // Show success message
+        } catch (err) {
+          console.error("Failed to copy: ", err);
+          toast.error("Failed to copy the account number"); // Show error message
+        }
+      } else {
+        toast.error("Account number is not available"); // Handle undefined account number
+      }
+    };
 
     useEffect(() => {
         const fetchBalance = async () => {
@@ -26,9 +47,11 @@ const Dashboard = () => {
               params: { accountRef }
             });
             setBalance(response.data.data.available_balance);
-            console.log(response.data.data.available_balance)
+
           } catch (err) {
             setError('Failed to fetch balance');
+            toast("Failer to fetch balance please reload the page")
+
           }
         };
     
@@ -72,25 +95,42 @@ const Dashboard = () => {
             </li>
 
             <li className="cursor-pointer flex flex-col gap-2 items-center">
-                <div className='bg-slate-50 rounded-lg p-2 flex flex-col items-center'>
+            <Dialog>
+      <DialogTrigger>
+      <div className='bg-slate-50 rounded-lg p-2 flex flex-col items-center'>
                 <Plus color="black" size={22} />
                 </div>
                 <span className='text-white font-bold text-sm'>Top up</span>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Account Details</DialogTitle>
+          <DialogDescription>
+            Copy account details to make transfer.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex items-center space-x-2">
+          <div className="grid flex-1 gap-2">
+            <Label htmlFor="accountNumber" className="sr-only">
+              Account Number
+            </Label>
+            <Input
+              id="accountNumber"
+              defaultValue={users?.accountNumber}
+              readOnly
+            />
+          </div>
+          <Button type="button" size="sm" className="px-3" onClick={handleCopy}>
+            <span className="sr-only">Copy</span>
+            <Copy className="h-4 w-4" />
+          </Button>
+        </div>
+        <h1>Bank Name: {users?.bankName}</h1>
+      </DialogContent>
+    </Dialog>
             </li>
 
-            <li className="cursor-pointer flex flex-col gap-2">
-                <div className='bg-slate-50 rounded-lg p-2 flex flex-col items-center'>
-                <PhoneCall color="black" size={22} />
-                </div>
-                <span className='text-white font-bold text-sm'>Airtime</span>
-            </li>
 
-            <li className="cursor-pointer flex flex-col gap-2">
-                <div className='bg-slate-50 rounded-lg p-2 flex flex-col items-center'>
-                <Signal color="black" size={22} />
-                </div>
-                <span className='text-white font-bold text-sm'>Data</span>
-            </li>
           </ul>
         </div>
 
