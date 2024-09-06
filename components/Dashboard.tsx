@@ -7,6 +7,10 @@ import axios from "axios"
 import { useUser } from "@clerk/nextjs"
 import { useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog"
+import TransferForm from "./TransferForm"
+
 
 const Dashboard = () => {
     const [balance, setBalance] = useState(null);
@@ -49,10 +53,22 @@ const Dashboard = () => {
         <div className="flex items-center justify-center pt-4">
           <ul className='flex gap-3'>
             <li className="cursor-pointer flex flex-col gap-2">
-                <div className='bg-slate-50 rounded-lg p-2 flex flex-col items-center'>
+
+            <Dialog>
+  <DialogTrigger>
+    
+  <div className='bg-slate-50 rounded-lg p-2 flex flex-col items-center'>
                 <Send color="black" size={22} />
                 </div>
                 <span className='text-white font-bold text-sm'>Send</span>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Transfer funds</DialogTitle>
+    </DialogHeader>
+    <TransferForm />
+  </DialogContent>
+</Dialog>
             </li>
 
             <li className="cursor-pointer flex flex-col gap-2 items-center">
