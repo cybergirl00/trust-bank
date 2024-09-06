@@ -23,6 +23,7 @@ import { Input } from "./ui/input";
 const Dashboard = () => {
   const [balance, setBalance] = useState<number | null>(null);
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(false)
   const users = useQuery(api.accounts.getAccountbyId, { userId: user?.id as string });
   const accountRef = users?.accountRef;
   const accountNumber = users?.accountNumber;
@@ -49,16 +50,19 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchBalance = async () => {
+      setIsLoading(true)
       if (accountRef) {
         try {
           const response = await axios.get(`/api/flutterwave/fetchBalance`, {
             params: { accountRef }
           });
           setBalance(response.data.data.available_balance);
+          setIsLoading(false)
         } catch (err) {
           toast.error("Failed to fetch balance, please reload the page");
+          setIsLoading(false)
         }
-      }
+      } 
     };
   
     fetchBalance().catch(err => console.error(err));
@@ -71,7 +75,8 @@ const Dashboard = () => {
       </div>
 
       <div>
-        <Header balance={balance} />
+        <Header balance={balance} 
+        />
       </div>
 
       {/* Actions */}

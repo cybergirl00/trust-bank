@@ -32,8 +32,14 @@ const TransactionsTable = ({ accountRef }: { accountRef: string }) => {
         <h2 className="text-3xl font-bold text-gray-800">Recent Transactions</h2>
       </div>
 
+
       <div className="overflow-x-auto">
-        <Table>
+        {!transactions ? (
+          <h1 className='font-bold text-xl flex flex-col items-center justify-center'>No recent transactions</h1>
+        )
+        : (
+
+          <Table>
           <TableCaption>A list of your recent transactions.</TableCaption>
           <TableHeader>
             <TableRow>
@@ -64,6 +70,8 @@ const TransactionsTable = ({ accountRef }: { accountRef: string }) => {
             ))}
           </TableBody>
         </Table>
+        )
+        }
       </div>
     </div>
   );
