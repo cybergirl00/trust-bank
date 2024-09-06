@@ -10,8 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoaderCircle } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
-import { toast } from "sonner"
-
+import { toast } from "sonner";
 
 const formSchema = z.object({
   phone: z.string().regex(/^\d+$/, "Phone number should be digits only"),
@@ -81,13 +80,19 @@ const Settingup = () => {
     }
   };
 
+  // Wrap the asynchronous `onSubmit` in a synchronous function to satisfy the expected `void` return
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(onSubmit)();
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-semibold mb-6 text-center">Finish Setting Up Your Account</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <FormField
               control={form.control}
               name="fullname"
               render={({ field }) => (
@@ -100,7 +105,7 @@ const Settingup = () => {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="firstname"
               render={({ field }) => (
@@ -113,8 +118,7 @@ const Settingup = () => {
                 </FormItem>
               )}
             />
-
-                  <FormField
+            <FormField
               control={form.control}
               name="lastname"
               render={({ field }) => (

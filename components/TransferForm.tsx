@@ -1,12 +1,12 @@
 "use client"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,FormField,
+  FormControl, FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -14,30 +14,30 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { ScrollArea } from "./ui/scroll-area"
-import { useUser } from "@clerk/nextjs"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { LoaderCircle } from "lucide-react"
-import { toast } from "sonner"
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ScrollArea } from "./ui/scroll-area";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   accountNumber: z.string().max(11, "Account number must be 11 characters").nonempty("Account number is required"),
   bank: z.string().nonempty("Bank is required"),
   amount: z.number().positive("Amount must be a positive number"),
   note: z.string().optional(),
-})
+});
 
 const TransferForm = () => {
   const { user } = useUser();
-  const users = useQuery(api.accounts.getAccountbyId, { userId: user?.id as string })
+  const users = useQuery(api.accounts.getAccountbyId, { userId: user?.id as string });
   const [banks, setBanks] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +91,6 @@ const TransferForm = () => {
     });
   }, []);
   
-
   if (error) return <div>{error}</div>;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -118,10 +117,16 @@ const TransferForm = () => {
     }
   };
 
+  // Wrap the form submit handler to ensure it is synchronous
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(onSubmit)();
+  };
+
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <FormField
             control={form.control}
             name="bank"
@@ -198,7 +203,6 @@ const TransferForm = () => {
       </Form>
     </div>
   );
-}
-
+};
 
 export default TransferForm;

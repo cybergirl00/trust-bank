@@ -117,9 +117,10 @@ const Dashboard = () => {
                     />
                   </div>
                   <Button type="button" size="sm" className="px-3" onClick={handleCopy}>
-                    <span className="sr-only">Copy</span>
-                    <Copy className="h-4 w-4" />
-                  </Button>
+                            <span className="sr-only">Copy</span>
+                            <Copy className="h-4 w-4" />
+                               </Button>
+
                 </div>
                 <h1>Bank Name: {users?.bankName}</h1>
               </DialogContent>
