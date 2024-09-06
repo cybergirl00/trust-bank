@@ -1,5 +1,4 @@
 "use client"
-
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -34,7 +33,7 @@ import { toast } from "sonner"
 const formSchema = z.object({
   accountNumber: z.string().max(11, "Account number must be 11 characters").nonempty("Account number is required"),
   bank: z.string().nonempty("Bank is required"),
-  amount: z.string(),
+  amount: z.number().positive("Amount must be a positive number"),
   note: z.string().optional(),
 })
 
@@ -87,21 +86,21 @@ const TransferForm = () => {
     defaultValues: {
       accountNumber: "",
       bank: "",
-      amount: "",
+      amount: 0, // Default value as a number
       note: "",
     },
-  })
+  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!balance || balance < values.amount) {
       toast.error('Insufficient balance');
-    }  else {
+    } else {
       try {
         setIsLoading(true);
         const response = await axios.post('/api/flutterwave/transfer', {
           account_bank: values.bank,
           account_number: values.accountNumber,
-          amount: values.amount,
+          amount: values.amount, // Use numeric amount
           narration: values.note,
           reference: `tx-${Date.now()}`, // Unique reference for the transfer
           debit_subaccount: accountRef, // Optional, depending on use case
@@ -126,7 +125,7 @@ const TransferForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Bank</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a bank" />
@@ -136,7 +135,7 @@ const TransferForm = () => {
                     <SelectGroup>
                       <ScrollArea className="h-[200px]">
                         {banks.map((bank) => (
-                          <SelectItem key={bank.code} value={bank?.code}>{bank.name}</SelectItem>
+                          <SelectItem key={bank.code} value={bank.code}>{bank.name}</SelectItem>
                         ))}
                       </ScrollArea>
                     </SelectGroup>
@@ -168,7 +167,7 @@ const TransferForm = () => {
               <FormItem>
                 <FormLabel>Amount</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter amount" {...field} />
+                  <Input type="number" placeholder="Enter amount" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
